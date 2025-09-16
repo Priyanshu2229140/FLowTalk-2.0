@@ -19,6 +19,10 @@ app.get("/debug-sentry", (req, res) => {
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+app.get("/api", (req, res) => {
+  res.json({ message: "Backend API is running 🚀" });
+});
+
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
 
