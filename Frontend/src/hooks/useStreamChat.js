@@ -13,8 +13,8 @@ export const useStreamChat = () => {
 
   const {
     data: tokenData,
-    isLoading: tokenLoading,
-    error: tokenError,
+    isLoading,
+    error,
   } = useQuery({
     queryKey: ["streamToken"],
     queryFn: getStreamToken,
@@ -22,13 +22,16 @@ export const useStreamChat = () => {
   });
 
   useEffect(() => {
+    let cancelled = false;
+    let client;
+
     const initChat = async () => {
       if (!tokenData?.token || !user) return;
 
       try {
         console.log("Stream token:", tokenData.token);
 
-        const client = StreamChat.getInstance(STREAM_API_KEY);
+        client = StreamChat.getInstance(STREAM_API_KEY);
 
         await client.connectUser(
           {
@@ -39,7 +42,7 @@ export const useStreamChat = () => {
           tokenData.token
         );
 
-        setChatClient(client);
+        if (!cancelled) setChatClient(client);
       } catch (error) {
         console.error("Error connecting to Stream Chat:", error);
         Sentry.captureException(error, {
@@ -56,11 +59,12 @@ export const useStreamChat = () => {
     initChat();
 
     return () => {
-      if (chatClient) {
-        chatClient.disconnectUser();
+      cancelled = true;
+      if (client) {
+        client.disconnectUser();
       }
     };
-  }, [tokenData, user, chatClient]);
+  }, [tokenData, user]);
 
-  return { chatClient, isLoading: tokenLoading, error: tokenError };
+  return { chatClient, isLoading, error };
 };
