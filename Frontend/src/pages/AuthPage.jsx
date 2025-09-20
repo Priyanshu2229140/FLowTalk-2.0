@@ -11,12 +11,12 @@ const AuthPage = () => {
             <span className="brand-name">Flow Talk</span>
           </div>
 
-          <h1 className="hero-title">Where Work Happens ✨</h1>
+          <h1 className="hero-title">Flow with Your Team.</h1>
 
           <p className="hero-subtitle">
-            Connect with your team instantly through secure, real-time
-            messaging. Experience seamless collaboration with powerful features
-            designed for modern teams.
+            "Connect with your team instantly through secure, real-time
+            messaging. Unlock seamless collaboration with powerful features
+            built for today’s modern teams."
           </p>
 
           <div className="features-list">
