@@ -27,11 +27,20 @@ export const deleteStreamUser = async (userId) => {
 };
 
 export const generateStreamToken = (userId) => {
-    try {
-        const userIdString=userId.toString();
-        return streamClient.createToken(userIdString);
-    } catch (error) {
-        console.log("Error generating stream token", error);
-        return null;
-    }
-}
+  try {
+    const userIdString = userId.toString();
+    return streamClient.createToken(userIdString);
+  } catch (error) {
+    console.log("Error generating stream token", error);
+    return null;
+  }
+};
+export const addUserToPublicChannels = async (newUserId) => {
+  const publicChannels = await streamClient.queryChannels({
+    discoverable: true,
+  });
+
+  for (const channel of publicChannels) {
+    await channel.addMembers([newUserId]);
+  }
+};

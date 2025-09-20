@@ -1,7 +1,11 @@
 import { Inngest } from "inngest";
 import { connectDB } from "./db.js";
 import { User } from "../models/user.model.js";
-import { deleteStreamUser, upsertStreamUser } from "./stream.js";
+import {
+  deleteStreamUser,
+  upsertStreamUser,
+  addUserToPublicChannels,
+} from "./stream.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "FlowTalk" });
@@ -24,11 +28,11 @@ const syncUser = inngest.createFunction(
 
     await User.create(newUser);
     await upsertStreamUser({
-      id:newUser.clerkId.toString(),
+      id: newUser.clerkId.toString(),
       name: newUser.name,
       image: newUser.image,
-
-    })
+    });
+    await addUserToPublicChannels(newUser.clerkId.toString());
   }
 );
 const deleteUserFromDB = inngest.createFunction(
