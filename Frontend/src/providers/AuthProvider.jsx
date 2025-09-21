@@ -15,7 +15,7 @@ export default function AuthProvider({ children }) {
         try {
           const token = await getToken();
           if (token) {
-            console.log(" Clerk JWT Token:", token);
+            //console.log(" Clerk JWT Token:", token);
             config.headers.Authorization = `Bearer ${token}`;
           }
           return config;
@@ -26,7 +26,7 @@ export default function AuthProvider({ children }) {
           ) {
             toast.error("Authentication issue. Please refresh the page.");
           }
-          return config; 
+          return config;
         }
       },
       (error) => {
@@ -41,9 +41,5 @@ export default function AuthProvider({ children }) {
     };
   }, [getToken]);
 
-  return (
-    <AuthContext.Provider value={{}}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 }

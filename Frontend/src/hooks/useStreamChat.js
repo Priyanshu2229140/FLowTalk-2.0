@@ -29,7 +29,7 @@ export const useStreamChat = () => {
       if (!tokenData?.token || !user) return;
 
       try {
-        console.log("Stream token:", tokenData.token);
+        //console.log("Stream token:", tokenData.token);
 
         client = StreamChat.getInstance(STREAM_API_KEY);
 
