@@ -4,6 +4,7 @@ import { useStreamChat } from "./../hooks/useStreamChat";
 import { useSearchParams } from "react-router";
 import PageLoader from "./../components/PageLoader.jsx";
 import UsersList from "./../components/UsersList.jsx";
+import CustomChannelHeader from "./../components/CustomChannelHeader.jsx";
 
 import {
   Chat,
@@ -104,7 +105,7 @@ const HomePage = () => {
           <div className="chat-main">
             <Channel channel={activeChannel}>
               <Window>
-                {/* <CustomChannelHeader/> */}
+                <CustomChannelHeader />
                 <MessageList />
                 <MessageInput />
               </Window>
