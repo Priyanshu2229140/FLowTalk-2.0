@@ -1,58 +1,47 @@
-🚀 FLowTalk 2.0
-
-
-
-
-
-
-
-
-
+# 🚀 FLowTalk 2.0
 
 FLowTalk 2.0 is a modern, real-time chat and video-calling platform for teams. It provides secure messaging, video calls, and channel management to enhance collaboration.
 
-✨ Features
-Icon	Feature	Description
-💬	Real-time Messaging	Secure text, emoji, and file sharing.
-🎥	Video Calls	Start or join calls directly within channels.
-🔐	Authentication	Managed via Clerk
-.
-🏷️	Channel Management	Public/private channels with pinned messages.
-🛠️	Error Monitoring	Sentry integration ensures app stability.
-🌙	Theming	Switch between light and dark modes.
-🛠️ Tech Stack
+---
 
-Frontend:
+## ✨ Features
 
-⚛️ React + Vite
+| Icon | Feature              | Description                                   |
+|------|----------------------|-----------------------------------------------|
+| 💬   | Real-time Messaging  | Secure text, emoji, and file sharing.         |
+| 🎥   | Video Calls          | Start or join calls directly within channels. |
+| 🔐   | Authentication       | Managed via Clerk.                            |
+| 🏷️   | Channel Management   | Public/private channels with pinned messages. |
+| 🛠️   | Error Monitoring     | Sentry integration ensures app stability.     |
+| 🌙   | Theming              | Switch between light and dark modes.          |
 
-🎨 Tailwind CSS
+---
 
-📊 React Query
+## 🛠️ Tech Stack
 
-🔐 Clerk React (Authentication)
+### **Frontend**
+- ⚛️ React + Vite
+- 🎨 Tailwind CSS
+- 📊 React Query
+- 🔐 Clerk React (Authentication)
+- 💬 Stream Chat React & 🎥 Stream Video React SDK
+- 🧭 React Router
+- 🖼️ Lucide React (Icons)
+- 🔔 React Hot Toast (Notifications)
 
-💬 Stream Chat React & 🎥 Stream Video React SDK
+### **Backend**
+- 🟢 Express.js
+- 🔐 Clerk Express
+- 🗄️ MongoDB via Mongoose
+- 💬 Stream Chat
+- ⏱️ Inngest (Background Jobs)
+- 🛡️ Sentry (Error Monitoring)
 
-🧭 React Router
+---
 
-🖼️ Lucide React (Icons) & 🔔 React Hot Toast (Notifications)
+## 📂 Project Structure
 
-Backend:
-
-🟢 Express.js
-
-🔐 Clerk Express
-
-🗄️ MongoDB via Mongoose
-
-💬 Stream Chat
-
-⏱️ Inngest (Background Jobs)
-
-🛡️ Sentry (Error Monitoring)
-
-📂 Project Structure
+```
 /
 ├── Backend/
 │   ├── src/
@@ -73,22 +62,32 @@ Backend:
 │   │   ├── pages/
 │   │   ├── providers/
 │   │   └── styles/
+│   ├── .env
 │   ├── package.json
 │   └── vite.config.js
 └── README.md
+```
 
-⚡ Installation
-1️⃣ Clone the Repository
+---
+
+## ⚡ Installation
+
+### 1️⃣ Clone the Repository
+
+```bash
 git clone https://github.com/priyanshu2229140/flowtalk-2.0.git
 cd flowtalk-2.0
+```
 
-2️⃣ Backend Setup
+### 2️⃣ Backend Setup
+
+```bash
 cd Backend
 npm install
+```
 
-
-Create .env with:
-
+**Create `.env` with:**
+```
 PORT=5000
 MONGO_URI=<Your MongoDB URI>
 CLERK_SECRET_KEY=<Your Clerk Secret Key>
@@ -98,94 +97,85 @@ SENTRY_DSN=<Your Sentry DSN>
 INNGEST_EVENT_KEY=<Your Inngest Event Key>
 INNGEST_SIGNING_KEY=<Your Inngest Signing Key>
 CLIENT_URL=<Your Frontend URL>
+```
 
-
-Start backend:
-
+**Start backend:**
+```bash
 npm run dev
+```
+Server runs at [http://localhost:5000](http://localhost:5000).
 
+### 3️⃣ Frontend Setup
 
-Server runs at http://localhost:5000.
-
-3️⃣ Frontend Setup
+```bash
 cd ../Frontend
 npm install
+```
 
-
-Create .env with:
-
+**Create `.env` with:**
+```
 VITE_CLERK_PUBLISHABLE_KEY=<Your Clerk Publishable Key>
 VITE_STREAM_API_KEY=<Your Stream API Key>
 VITE_BACKEND_URL=http://localhost:5000
+```
 
-
-Start frontend:
-
+**Start frontend:**
+```bash
 npm run dev
+```
+Frontend runs at [http://localhost:5173](http://localhost:5173).
 
+---
 
-Frontend runs at http://localhost:5173.
+## 🌐 Deployment
 
-🌐 Deployment
+**Vercel Deployment:**
 
-Vercel Deployment:
+### Frontend:
+- Push Frontend to GitHub
+- Connect repo on Vercel
+- Add environment variables in Vercel
+- Deploy
 
-Frontend:
+### Backend:
+- Push Backend to GitHub
+- Configure as a serverless function using `@vercel/node`
+- Add environment variables in Vercel
+- Deploy
 
-Push Frontend to GitHub
+> ⚠️ **Update frontend `VITE_BACKEND_URL` to the deployed backend URL.**
 
-Connect repo on Vercel
+---
 
-Add environment variables in Vercel
+## 📝 Usage
 
-Deploy
+- Register/Login via Clerk
+- Join/Create Channels
+- Send messages and files
+- Start Video Calls
+- Manage Profile & Settings
+- Toggle between light/dark themes
 
-Backend:
+---
 
-Push Backend to GitHub
+## 🤝 Contributing
 
-Configure as a serverless function using @vercel/node
+1. Fork the repo
+2. Create a branch: `git checkout -b feature/YourFeature`
+3. Commit changes: `git commit -m "Add feature"`
+4. Push branch: `git push origin feature/YourFeature`
+5. Open a Pull Request
 
-Add environment variables in Vercel
+Refer to `CONTRIBUTING.md` if available.
 
-Deploy
+---
 
-⚠️ Update frontend VITE_BACKEND_URL to the deployed backend URL.
+## 📬 Contact
 
-📝 Usage
+Open issues on GitHub or contact [Priyanshu2229140](https://github.com/Priyanshu2229140).
 
-Register/Login via Clerk
+---
 
-Join/Create Channels
-
-Send messages and files
-
-Start Video Calls
-
-Manage Profile & Settings
-
-Toggle between light/dark themes
-
-🤝 Contributing
-
-Fork the repo
-
-Create a branch: git checkout -b feature/YourFeature
-
-Commit changes: git commit -m "Add feature"
-
-Push branch: git push origin feature/YourFeature
-
-Open a Pull Request
-
-Refer to CONTRIBUTING.md
- if available.
-
-📬 Contact
-
-Open issues on GitHub or contact Priyanshu2229140
-.
-
-⭐ Acknowledgements
+## ⭐ Acknowledgements
 
 Thanks to all contributors and open-source projects powering FLowTalk 2.0.
