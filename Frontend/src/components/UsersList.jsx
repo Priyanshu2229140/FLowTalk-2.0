@@ -14,13 +14,13 @@ const UsersList = ({ activeChannel }) => {
     if (!client?.user) return;
 
     const response = await client.queryUsers(
-      { id: { $ne: client.user.id } }, 
+      { id: { $ne: client.user.id } },
       { name: 1 },
       { limit: 20 }
     );
 
     const usersOnly = response.users.filter(
-      (user) => !user.id.startsWith("recording-")
+      (user) => !user.id.startsWith("recording-") && !user.deleted_at // 🚀 exclude deleted users
     );
 
     return usersOnly;
