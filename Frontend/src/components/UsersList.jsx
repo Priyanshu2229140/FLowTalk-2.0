@@ -14,13 +14,16 @@ const UsersList = ({ activeChannel }) => {
     if (!client?.user) return;
 
     const response = await client.queryUsers(
-      { id: { $ne: client.user.id } },
+      { id: { $ne: client.user.id }, deleted_at: { $exists: false } }, // ✅ filter at query level
       { name: 1 },
       { limit: 20 }
     );
 
     const usersOnly = response.users.filter(
-      (user) => !user.id.startsWith("recording-") && !user.deleted_at // 🚀 exclude deleted users
+      (user) =>
+        !user.id.startsWith("recording-") &&
+        !user.id.startsWith("deleted-user") && // ✅ filter deleted-user id
+        !user.deleted_at // ✅ filter deleted users
     );
 
     return usersOnly;
@@ -37,33 +40,30 @@ const UsersList = ({ activeChannel }) => {
     staleTime: 1000 * 60 * 5, // 5 mins
   });
 
-  // staleTime
-  // what it does: tells React Query the data is "fresh" for 5 minutes
-  // behavior: during these 5 minutes, React Query WON'T refetch the data automatically
-
   const startDirectMessage = async (targetUser) => {
     if (!targetUser || !client?.user) return;
 
     try {
-      //  bc stream does not allow channelId to be longer than 64 chars
       const channelId = [client.user.id, targetUser.id]
         .sort()
         .join("-")
         .slice(0, 64);
+
       const channel = client.channel("messaging", channelId, {
         members: [client.user.id, targetUser.id],
       });
+
       await channel.watch();
       setSearchParams({ channel: channel.id });
     } catch (error) {
-      console.log("Error creating DM", error),
-        Sentry.captureException(error, {
-          tags: { component: "UsersList" },
-          extra: {
-            context: "create_direct_message",
-            targetUserId: targetUser?.id,
-          },
-        });
+      console.log("Error creating DM", error);
+      Sentry.captureException(error, {
+        tags: { component: "UsersList" },
+        extra: {
+          context: "create_direct_message",
+          targetUserId: targetUser?.id,
+        },
+      });
     }
   };
 
@@ -81,13 +81,20 @@ const UsersList = ({ activeChannel }) => {
   return (
     <div className="team-channel-list__users">
       {users.map((user) => {
+        // extra guard to skip deleted users
+        if (user.deleted_at || user.id.startsWith("deleted-user")) {
+          return null;
+        }
+
         const channelId = [client.user.id, user.id]
           .sort()
           .join("-")
           .slice(0, 64);
+
         const channel = client.channel("messaging", channelId, {
           members: [client.user.id, user.id],
         });
+
         const unreadCount = channel.countUnread();
         const isActive = activeChannel && activeChannel.id === channelId;
 
@@ -95,7 +102,7 @@ const UsersList = ({ activeChannel }) => {
           <button
             key={user.id}
             onClick={() => startDirectMessage(user)}
-            className={`str-chat__channel-preview-messenger  ${
+            className={`str-chat__channel-preview-messenger ${
               isActive &&
               "!bg-black/20 !hover:bg-black/20 border-l-8 border-purple-500 shadow-lg0"
             }`}
