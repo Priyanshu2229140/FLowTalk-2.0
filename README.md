@@ -5,7 +5,7 @@
 [![React](https://img.shields.io/badge/built%20with-React-blue?logo=react&style=for-the-badge)](https://reactjs.org)
 [![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js&style=for-the-badge)](https://nodejs.org)
 [![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen?logo=mongodb&style=for-the-badge)](https://www.mongodb.com/)
-[![Socket.IO](https://img.shields.io/badge/Realtime-Socket.IO-black?logo=socket.io&style=for-the-badge)](https://socket.io/)
+[![Stream.IO](https://img.shields.io/badge/Realtime-Stream.IO-black?logo=socket.io&style=for-the-badge)](https://getstream.io/)
 
 FLowTalk-2.0 is a powerful and modern conversational platform built for seamless, real-time communications. The design leverages a rich JavaScript ecosystem, best-in-class libraries, and robust backend architecture.
 
