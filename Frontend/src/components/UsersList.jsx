@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useSearchParams } from "react-router";
@@ -10,36 +11,56 @@ const UsersList = ({ activeChannel }) => {
   const { client } = useChatContext();
   const [_, setSearchParams] = useSearchParams();
 
+  // Fetch other Stream users
   const fetchUsers = useCallback(async () => {
-    if (!client?.user) return;
+    if (!client?.user) return [];
 
-    const response = await client.queryUsers(
-      { id: { $ne: client.user.id }, deleted_at: { $exists: false } }, // ✅ filter at query level
-      { name: 1 },
-      { limit: 20 }
-    );
+    try {
+      const response = await client.queryUsers(
+        {
+          id: { $ne: client.user.id },
+        },
+        { name: 1 },
+        { limit: 20 }
+      );
 
-    const usersOnly = response.users.filter(
-      (user) =>
-        !user.id.startsWith("recording-") &&
-        !user.id.startsWith("deleted-user") && // ✅ filter deleted-user id
-        !user.deleted_at // ✅ filter deleted users
-    );
+      // Filter unwanted users on the frontend
+      const usersOnly = response.users.filter(
+        (user) =>
+          !user.id.startsWith("recording-") &&
+          !user.id.startsWith("deleted-user") &&
+          !user.deleted_at
+      );
 
-    return usersOnly;
+      return usersOnly;
+    } catch (error) {
+      console.error("Error fetching Stream users:", error);
+
+      Sentry.captureException(error, {
+        tags: { component: "UsersList" },
+        extra: {
+          context: "fetch_stream_users",
+          currentUserId: client?.user?.id,
+        },
+      });
+
+      throw error;
+    }
   }, [client]);
 
   const {
     data: users = [],
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["users-list", client?.user?.id],
     queryFn: fetchUsers,
     enabled: !!client?.user,
-    staleTime: 1000 * 60 * 5, // 5 mins
+    staleTime: 1000 * 60 * 5,
   });
 
+  // Start direct message
   const startDirectMessage = async (targetUser) => {
     if (!targetUser || !client?.user) return;
 
@@ -54,9 +75,11 @@ const UsersList = ({ activeChannel }) => {
       });
 
       await channel.watch();
+
       setSearchParams({ channel: channel.id });
     } catch (error) {
-      console.log("Error creating DM", error);
+      console.error("Error creating DM:", error);
+
       Sentry.captureException(error, {
         tags: { component: "UsersList" },
         extra: {
@@ -67,22 +90,41 @@ const UsersList = ({ activeChannel }) => {
     }
   };
 
-  if (isLoading)
-    return <div className="team-channel-list__message">Loading users...</div>;
-  if (isError)
+  if (isLoading) {
     return (
-      <div className="team-channel-list__message">Failed to load users</div>
+      <div className="team-channel-list__message">
+        Loading users...
+      </div>
     );
-  if (!users.length)
+  }
+
+  if (isError) {
+    console.error("Stream user query failed:", error);
+
     return (
-      <div className="team-channel-list__message">No other users found</div>
+      <div className="team-channel-list__message">
+        Failed to load users
+      </div>
     );
+  }
+
+  if (!users.length) {
+    return (
+      <div className="team-channel-list__message">
+        No other users found
+      </div>
+    );
+  }
 
   return (
     <div className="team-channel-list__users">
       {users.map((user) => {
-        // extra guard to skip deleted users
-        if (user.deleted_at || user.id.startsWith("deleted-user")) {
+        // Extra guard against deleted users
+        if (
+          user.deleted_at ||
+          user.id.startsWith("deleted-user") ||
+          user.id.startsWith("recording-")
+        ) {
           return null;
         }
 
@@ -96,15 +138,17 @@ const UsersList = ({ activeChannel }) => {
         });
 
         const unreadCount = channel.countUnread();
-        const isActive = activeChannel && activeChannel.id === channelId;
+        const isActive =
+          activeChannel && activeChannel.id === channelId;
 
         return (
           <button
             key={user.id}
             onClick={() => startDirectMessage(user)}
             className={`str-chat__channel-preview-messenger ${
-              isActive &&
-              "!bg-black/20 !hover:bg-black/20 border-l-8 border-purple-500 shadow-lg0"
+              isActive
+                ? "!bg-black/20 !hover:bg-black/20 border-l-8 border-purple-500 shadow-lg"
+                : ""
             }`}
           >
             <div className="flex items-center gap-2 w-full">
@@ -118,7 +162,9 @@ const UsersList = ({ activeChannel }) => {
                 ) : (
                   <div className="w-4 h-4 rounded-full bg-gray-400 flex items-center justify-center">
                     <span className="text-xs text-white">
-                      {(user.name || user.id).charAt(0).toUpperCase()}
+                      {(user.name || user.id)
+                        .charAt(0)
+                        .toUpperCase()}
                     </span>
                   </div>
                 )}
@@ -137,7 +183,7 @@ const UsersList = ({ activeChannel }) => {
               </span>
 
               {unreadCount > 0 && (
-                <span className="flex items-center justify-center ml-2 size-4 text-xs rounded-full bg-red-500 ">
+                <span className="flex items-center justify-center ml-2 size-4 text-xs rounded-full bg-red-500">
                   {unreadCount}
                 </span>
               )}
